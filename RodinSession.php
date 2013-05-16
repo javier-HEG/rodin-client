@@ -51,9 +51,7 @@ class RodinSession {
 		// TODO Get user information from server and compare
 		$response = RodinBroker::makeCallToServer(RodinBroker::METHOD_GET, 'user/' . $username);
 
-		if ($response->code == 200) {
-			$userPassword = $response->body->password;
-
+		if ($response->code == 200 && $userPassword = $response->body->password) {
 			if ($password == $userPassword) {
 				$_SESSION[RodinSession::SESSION_USER_NAME] = $username;
 				$_SESSION[RodinSession::SESSION_REAL_NAME] = $response->body->name;
