@@ -1,5 +1,7 @@
 <?php
 
+include_once('RodinBroker.php');
+
 class RodinSession {
 
 	const SESSION_USER_NAME = 'username';
@@ -47,12 +49,19 @@ class RodinSession {
 
 	public function userLoginAttempt($username, $password) {
 		// TODO Get user information from server and compare
-		if ($username == 'username' && $password == sha1('username')) {
-			$_SESSION[RodinSession::SESSION_USER_NAME] = $username;
-			$_SESSION[RodinSession::SESSION_REAL_NAME] = 'Test User';
-			$this->resetLogginAttempts();
-			session_regenerate_id();
-			return true;
+		$response = RodinBroker::makeCallToServer(RodinBroker::METHOD_GET, 'user/' . $username);
+
+		if ($response->code == 200) {
+			$userPassword = $response->body->password;
+
+			if ($password == $userPassword) {
+				$_SESSION[RodinSession::SESSION_USER_NAME] = $username;
+				$_SESSION[RodinSession::SESSION_REAL_NAME] = $response->body->name;
+				$this->resetLogginAttempts();
+				session_regenerate_id();
+
+				return true;
+			}
 		} else {
 			$this->registerLoginAttempt();
 			return false;
@@ -71,8 +80,7 @@ class RodinSession {
 
 	public function getUserLoginAttempts() {
 		if (isset($_SESSION[RodinSession::SESSION_ATTEMPTS]))
-			return $_SESSION[RodinSession::SESSION_ATTEMPTS];
-		else {
+			return $_SESSION[RodinSession::SESSION_ATTEMPTS]; else {
 			if ($this->isUserLoggedIn())
 				return -1;
 			else

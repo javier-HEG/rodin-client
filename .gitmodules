@@ -1,0 +1,3 @@
+[submodule "lib/httpful"]
+	path = lib/httpful
+	url = git://github.com/nategood/httpful.git
