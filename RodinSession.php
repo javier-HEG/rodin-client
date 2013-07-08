@@ -81,6 +81,15 @@ class RodinSession {
 					$_SESSION[RodinSession::SESSION_UNIVERSE] = $universeResponse->body->name;
 				}
 
+				$logMessage = '';
+				foreach ($response->headers->toArray() as $key => $value) {
+					if (strpos($key, 'access-control') !== false) {
+						$logMessage .= $key . ':' . $value . '<br />';
+					}
+				}
+
+				setInterfaceMessage(MESSAGE_KIND_DEBUG, $logMessage);
+
 				$this->resetLogginAttempts();
 				session_regenerate_id();
 
