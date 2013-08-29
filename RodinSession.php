@@ -6,12 +6,9 @@ class RodinSession {
 
 	const SESSION_USER_NAME = 'username';
 	const SESSION_REAL_NAME = 'userrealname';
-	const SESSION_PASSWORD = 'password';
 	const SESSION_ATTEMPTS = 'attempts';
 	const SESSION_LAST_ATTEMPT = 'lastattempt';
 	const SESSION_TIMEOUT = 'timeout';
-	const SESSION_UNIVERSE = 'universename';
-	const SESSION_UNIVERSE_ID = 'universeid';
 
 	public function __construct() {
 		session_name('rodinclient');
@@ -48,14 +45,6 @@ class RodinSession {
 		return $_SESSION[RodinSession::SESSION_REAL_NAME];
 	}
 
-	public function getUniverseName() {
-		return $_SESSION[RodinSession::SESSION_UNIVERSE];
-	}
-
-	public function getUniverseId() {
-		return $_SESSION[RodinSession::SESSION_UNIVERSE_ID];
-	}
-
 	public function userLogout() {
 		session_destroy();
 		header('Location: index.php');
@@ -68,18 +57,6 @@ class RodinSession {
 			if ($password == $userPassword) {
 				$_SESSION[RodinSession::SESSION_USER_NAME] = $username;
 				$_SESSION[RodinSession::SESSION_REAL_NAME] = $response->body->name;
-
-				$_SESSION[RodinSession::SESSION_UNIVERSE_ID] = $response->body->universeid;
-
-				// FIXME Remove this test once the creation of a user cascades
-				// into the creation of a default universe and the last universe
-				// can not be deleted
-				if ($_SESSION[RodinSession::SESSION_UNIVERSE_ID] == false) {
-					$_SESSION[RodinSession::SESSION_UNIVERSE] = "(No universe)";
-				} else {
-					$universeResponse = RodinBroker::makeCallToServer(RodinBroker::METHOD_GET, 'universe/' . $_SESSION[RodinSession::SESSION_UNIVERSE_ID]);
-					$_SESSION[RodinSession::SESSION_UNIVERSE] = $universeResponse->body->name;
-				}
 
 				$logMessage = '';
 				foreach ($response->headers->toArray() as $key => $value) {
