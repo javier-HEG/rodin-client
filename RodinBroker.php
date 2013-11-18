@@ -16,20 +16,24 @@ class RodinBroker {
 	const METHOD_DELETE = 3;
 
 	public static function makeCallToServer($method = RodinBroker::METHOD_GET, $resource, $parameters = NULL) {
+		if ($parameters == NULL)
+			return RodinBroker::makeCall($method, RodinBroker::RODIN_SERVER . $resource);
+		else
+			return RodinBroker::makeCall($method, RodinBroker::RODIN_SERVER . $resource, $parameters);
+	}
+
+	public static function makeCall($method = RodinBroker::METHOD_GET, $url, $parameters = NULL) {
 		switch ($method) {
-			case RodinBroker::METHOD_POST:
-				break;
-			case RodinBroker::METHOD_PUT:
-				break;
-			case RodinBroker::METHOD_DELETE:
-				break;
 			case RodinBroker::METHOD_GET:
-			default:
-				$request = \Httpful\Request::get(RodinBroker::RODIN_SERVER . $resource)
-						->mime('application/json');
+				$request = \Httpful\Request::get($url)->mime('application/json');
 				$response = $request->send();
 
 				return $response;
+			case RodinBroker::METHOD_POST:
+			case RodinBroker::METHOD_PUT:
+			case RodinBroker::METHOD_DELETE:
+			default:
+				break;
 		}
 	}
 
