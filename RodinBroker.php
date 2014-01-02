@@ -9,17 +9,16 @@ use \Httpful\Request;
  */
 class RodinBroker {
 
-	const RODIN_SERVER = 'http://127.0.0.1:8080/rodin_server/resources/';
 	const METHOD_GET = 0;
 	const METHOD_POST = 1;
 	const METHOD_PUT = 2;
 	const METHOD_DELETE = 3;
 
-	public static function makeCallToServer($method = RodinBroker::METHOD_GET, $resource, $parameters = null) {
+	public static function makeCallToServer($method = RodinBroker::METHOD_GET, $url, $parameters = null) {
 		if ($parameters == null)
-			return RodinBroker::makeCall($method, RodinBroker::RODIN_SERVER . $resource);
+			return RodinBroker::makeCall($method, $url);
 		else
-			return RodinBroker::makeCall($method, RodinBroker::RODIN_SERVER . $resource, $parameters);
+			return RodinBroker::makeCall($method, $url, $parameters);
 	}
 
 	public static function makeCall($method = RodinBroker::METHOD_GET, $url, $parameters = null, $proxy = null) {

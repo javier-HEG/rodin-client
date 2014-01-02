@@ -10,6 +10,8 @@ class RodinSession {
 	const SESSION_LAST_ATTEMPT = 'lastattempt';
 	const SESSION_TIMEOUT = 'timeout';
 
+	private $serverBaseUrl = '';
+
 	public function __construct() {
 		session_name('rodinclient');
 		session_start();
@@ -45,13 +47,17 @@ class RodinSession {
 		return $_SESSION[RodinSession::SESSION_REAL_NAME];
 	}
 
+	public function setBaseUrl($url) {
+		$this->serverBaseUrl = $url;
+	}
+
 	public function userLogout() {
 		session_destroy();
 		header('Location: index.php');
 	}
 
 	public function userLoginAttempt($username, $password) {
-		$response = RodinBroker::makeCallToServer(RodinBroker::METHOD_GET, 'user/' . $username);
+		$response = RodinBroker::makeCallToServer(RodinBroker::METHOD_GET, $this->serverBaseUrl . 'user/' . $username);
 
 		if ($response->code == 200 && $userPassword = $response->body->password) {
 			if ($password == $userPassword) {
